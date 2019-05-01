@@ -21,13 +21,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     nicmsg.cpp \
-    choosedlg.cpp
+    choosedlg.cpp \
+    netmodel.cpp
 
 HEADERS += \
         mainwindow.h \
     nicmsg.h \
     singleton.h \
-    choosedlg.h
+    choosedlg.h \
+    netmodel.h
 
 FORMS += \
         mainwindow.ui \

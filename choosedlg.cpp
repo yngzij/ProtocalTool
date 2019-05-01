@@ -2,8 +2,7 @@
 #include "ui_choosedlg.h"
 #include "singleton.h"
 #include "nicmsg.h"
-
-#include <QDebug>
+#include "netmodel.h"
 
 ChooseDlg::ChooseDlg(QWidget *parent) :
     QDialog(parent),
@@ -38,6 +37,7 @@ void ChooseDlg::on_cacel_btn_clicked()
 
 void ChooseDlg::on_ok_btn_clicked()
 {
+
     changeData();
     this->hide();
 }
@@ -55,9 +55,16 @@ int ChooseDlg::getPort() const
 
 void ChooseDlg::changeData()
 {
+
     m_port= this->ui->port_spinBox->value();
     m_interface= this->ui->interface_comboBox->currentText();
-    qDebug() << m_port << m_interface <<'\n';
+
+
+
+    Singleton<NetModel>::Instance().setNic(m_interface.toStdString());
+    Singleton<NetModel>::Instance().setPort(m_port);
+
+
 }
 
 

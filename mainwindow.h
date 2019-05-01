@@ -6,6 +6,7 @@
 #include <QStringListModel>
 #include <QStandardItemModel>
 #include <choosedlg.h>
+#include "netmodel.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,10 +27,12 @@ public:
 private slots:
     void on_ac_choose_triggered();
 
+    void on_ac_start_triggered();
+
 private:
     Ui::MainWindow       *ui;
     QStandardItemModel   *m_tableHandle;
-    ChooseDlg            *chooseDlg;
+    ChooseDlg            *m_chooseDlg;
 
 };
 

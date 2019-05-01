@@ -35,7 +35,7 @@
     </property>
     <addaction name="ac_choose"/>
     <addaction name="separator"/>
-    <addaction name="action_2"/>
+    <addaction name="ac_start"/>
     <addaction name="action_3"/>
    </widget>
    <widget class="QMenu" name="menu_2">
@@ -92,7 +92,7 @@
     <string>协议简介</string>
    </property>
   </action>
-  <action name="action_2">
+  <action name="ac_start">
    <property name="text">
     <string>开始捕获</string>
    </property>

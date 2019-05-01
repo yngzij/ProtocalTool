@@ -3,16 +3,18 @@
 #include <QStandardItemModel>
 #include <libnet.h>
 #include <choosedlg.h>
-#include <QDebug>
+
 #include "nicmsg.h"
 #include "singleton.h"
-
-
+#include "netmodel.h"
+#include "singleton.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    chooseDlg(new ChooseDlg)
+    m_chooseDlg(new ChooseDlg)
 {
+
+
     ui->setupUi(this);
     initUI();
     signalAndSlot();
@@ -49,5 +51,10 @@ void MainWindow::signalAndSlot()
 
 void MainWindow::on_ac_choose_triggered()
 {
-    chooseDlg->exec();
+    m_chooseDlg->exec();
+}
+
+void MainWindow::on_ac_start_triggered()
+{
+    Singleton<NetModel>::Instance().run();
 }

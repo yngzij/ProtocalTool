@@ -22,7 +22,6 @@ public:
 public slots:
     void init();
 
-
     void changeData();
 
 private slots:
