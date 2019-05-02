@@ -29,7 +29,8 @@ HEADERS += \
     nicmsg.h \
     singleton.h \
     choosedlg.h \
-    netmodel.h
+    netmodel.h \
+    pcapstruct.h
 
 FORMS += \
         mainwindow.ui \

@@ -1,28 +1,38 @@
 #ifndef NETMODEL_H
 #define NETMODEL_H
+
 #include <string>
-const int SNAP_LEN = 1518;
-/* ethernet headers are always exactly 14 bytes [1] */
-const int SIZE_ETHERNET = 14;
-/* Ethernet addresses are 6 bytes */
-const int ETHER_ADDR_LEN = 6;
+#include <queue>
+#include <sys/types.h>
+#include <pthread.h>
+#include <pcap.h>
+
 
 class NetModel
 {
 public:
     NetModel();
     NetModel(char *, int);
-    void  run();
 
-    std::string nic() const;
-    void setNic(const std::string &nic);
+    void              run();
+    std::string       nic() const;
+    void              setNic(const std::string &nic);
+    int               port() const;
+    void              setPort(const int &port);
+    u_char            *getRow();
+    void              init();
 
-    int port() const;
-    void setPort(const int &port);
+public:
+    std::queue<const u_char *>   q_;
+    pthread_mutex_t              mux_;
+    pthread_cond_t               cond_;
+    pcap_t                      *m_handle;
 
 private:
-    std::string  m_nic;
-    int          m_port;
+    std::string                  m_nic;
+    int                          m_port;
+
+
 };
 
 #endif // NETMODEL_H

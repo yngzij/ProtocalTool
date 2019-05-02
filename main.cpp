@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(codec);
 
     Singleton<NICMsg>::Instance().init();
+    Singleton<NetModel>::Instance().init();
 
 
     MainWindow w;

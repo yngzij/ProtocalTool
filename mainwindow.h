@@ -23,16 +23,18 @@ public:
     void initUI();
     void signalAndSlot();
 
-
+public:
+    bool                 exit_;
+    QStandardItemModel   *m_tableHandle;
+    QItemSelectionModel       *m_selectItem;
 private slots:
     void on_ac_choose_triggered();
-
     void on_ac_start_triggered();
 
 private:
     Ui::MainWindow       *ui;
-    QStandardItemModel   *m_tableHandle;
     ChooseDlg            *m_chooseDlg;
+
 
 };
 

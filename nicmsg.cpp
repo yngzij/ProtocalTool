@@ -25,7 +25,6 @@ void NICMsg::init()
     char      errbuf[PCAP_ERRBUF_SIZE];
     pcap_findalldevs(&alldev, errbuf);
 
-
     for (dev = alldev; dev != nullptr; dev = dev->next) {
         for (auto *p = dev->addresses; p != nullptr; p = p->next) {
             if (nullptr != p){
@@ -44,9 +43,6 @@ void NICMsg::init()
 }
 
 
-
-
-
 void NICMsg::push(NIC *node)
 {
     if (m_netcard == nullptr) {
@@ -60,6 +56,7 @@ void NICMsg::push(NIC *node)
     m_netcard->last = m_netcard->last->next;
 }
 
+
 void NICMsg::destory()
 {
     for (auto *p = m_netcard->first;p != nullptr; ) {
@@ -68,6 +65,7 @@ void NICMsg::destory()
         p = t;
     }
 }
+
 
 void NICMsg::done()
 {

@@ -59,11 +59,8 @@ void ChooseDlg::changeData()
     m_port= this->ui->port_spinBox->value();
     m_interface= this->ui->interface_comboBox->currentText();
 
-
-
     Singleton<NetModel>::Instance().setNic(m_interface.toStdString());
     Singleton<NetModel>::Instance().setPort(m_port);
-
 
 }
 
