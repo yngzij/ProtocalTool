@@ -21,8 +21,13 @@ NetModel::NetModel(char *nic, int port):m_nic(nic),m_port(port)
 
 void NetModel::run()
 {
+    if (exit_ && run_ ) {
+        exit_ = false;
+        return;
+    }
+
+    run_ = true;
     char  errbuf[PCAP_ERRBUF_SIZE];
-    struct bpf_program fp;
     char filter_exp[] = "ip";
     bpf_u_int32 net;
     bpf_u_int32 mask;
@@ -42,11 +47,20 @@ void NetModel::run()
         exit(EXIT_FAILURE);
     }
 
-    pthread_t pid;
     pthread_create(&pid, nullptr, loop_event, this);
+    pthread_detach(pid);
+}
+
+void NetModel::stop()
+{
+    exit_ = true;
+    //pthread_exit(pid);
     //pcap_freecode(&fp);
     //pcap_close(m_handle);
 }
+
+
+
 
 std::string NetModel::nic() const
 {
@@ -84,15 +98,19 @@ void NetModel::init()
 {
     mux_  = PTHREAD_MUTEX_INITIALIZER;
     cond_ = PTHREAD_COND_INITIALIZER;
+    exit_ = false;
+    run_  = false;
 }
 
 
 void loop_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     auto *self = reinterpret_cast<NetModel*>(args);
-    pthread_mutex_lock(&self->mux_);
-    self->q_.push(packet);
-    pthread_cond_signal(&self->cond_);
-    pthread_mutex_unlock(&self->mux_);
+    if (!self->exit_) {
+        pthread_mutex_lock(&self->mux_);
+        self->q_.push(packet);
+        pthread_cond_signal(&self->cond_);
+        pthread_mutex_unlock(&self->mux_);
+    }
 }
 
 void *loop_event(void *args) {

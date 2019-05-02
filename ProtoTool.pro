@@ -22,7 +22,8 @@ SOURCES += \
         mainwindow.cpp \
     nicmsg.cpp \
     choosedlg.cpp \
-    netmodel.cpp
+    netmodel.cpp \
+    showwid.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -30,11 +31,13 @@ HEADERS += \
     singleton.h \
     choosedlg.h \
     netmodel.h \
-    pcapstruct.h
+    pcapstruct.h \
+    showwid.h
 
 FORMS += \
         mainwindow.ui \
-    choosedlg.ui
+    choosedlg.ui \
+    showwid.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

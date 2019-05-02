@@ -12,6 +12,7 @@
 #include "pcapstruct.h"
 #include <QItemSelectionModel>
 
+#include <QDebug>
 void *ToModel(void *args);
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -54,7 +55,8 @@ void MainWindow::initUI()
 //save interface and port
 void MainWindow::signalAndSlot()
 {
-
+    connect(this->m_selectItem, SIGNAL(currentChanged(QModelIndex, QModelIndex)),
+            this, SLOT(on_currentChanged(QModelIndex, QModelIndex)));
 }
 
 
@@ -71,6 +73,13 @@ void MainWindow::on_ac_start_triggered()
     pthread_detach(pid);
 }
 
+void MainWindow::on_currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    if (current.isValid()) {
+        qDebug() << current.row() <<current.column() << '\n';
+    }
+}
+
 void *ToModel(void *args) {
     auto *self = reinterpret_cast<MainWindow *>(args);
     static ssize_t number = 1;
@@ -83,6 +92,7 @@ void *ToModel(void *args) {
     QStandardItem *no;
     QStandardItem *s_ipItem;
     QStandardItem *d_ipItem;
+    QStandardItem *protoItem;
 
     while (!self->exit_) {
         QList<QStandardItem *> itemList;
@@ -95,6 +105,22 @@ void *ToModel(void *args) {
             fprintf(stderr,"   * Invalid IP header length: %u bytes\n", size_ip);
             continue;
         }
+        switch (ip->ip_p) {
+        case IPPROTO_TCP:
+            protoItem = new QStandardItem("TCP");
+            break;
+        case IPPROTO_UDP:
+            protoItem = new QStandardItem("UDP");
+            break;
+            case IPPROTO_ICMP:
+            protoItem = new QStandardItem("ICMP");
+            break;
+            case IPPROTO_IP:
+            protoItem = new QStandardItem("IP");
+            break;
+            default:
+            protoItem = new QStandardItem("unknow");
+        }
 
         no =       new QStandardItem(QString::number(number,10));
         s_ipItem = new QStandardItem(QString::fromLocal8Bit(inet_ntoa(ip->ip_src)));
@@ -103,12 +129,20 @@ void *ToModel(void *args) {
         no->setTextAlignment(Qt::AlignCenter);
         s_ipItem->setTextAlignment(Qt::AlignCenter);
         d_ipItem->setTextAlignment(Qt::AlignCenter);
+        protoItem->setTextAlignment(Qt::AlignCenter);
 
         QModelIndex curIndex = self->m_tableHandle->index(self->m_tableHandle->rowCount()-1,0);
+
         //self->m_selectItem->clearSelection();
-        itemList << no <<s_ipItem <<d_ipItem ;
+        itemList << no <<s_ipItem <<d_ipItem <<protoItem;
         self->m_tableHandle->insertRow(self->m_tableHandle->rowCount()-1,itemList);
-        //self->m_selectItem->setCurrentIndex(curIndex, QItemSelectionModel::Select);
+
+        //self->m_selectItem->setCurrentIndex(curIndex, QItemSelectionModel::SelectCurrent);
         number++;
     }
+}
+
+void MainWindow::on_ac_stop_triggered()
+{
+    Singleton<NetModel>::Instance().stop();
 }

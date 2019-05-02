@@ -30,6 +30,9 @@ public:
 private slots:
     void on_ac_choose_triggered();
     void on_ac_start_triggered();
+    void on_currentChanged(const QModelIndex &current, const QModelIndex &previous);
+
+    void on_ac_stop_triggered();
 
 private:
     Ui::MainWindow       *ui;

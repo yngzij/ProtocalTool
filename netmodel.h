@@ -15,6 +15,7 @@ public:
     NetModel(char *, int);
 
     void              run();
+    void              stop() ;
     std::string       nic() const;
     void              setNic(const std::string &nic);
     int               port() const;
@@ -27,11 +28,13 @@ public:
     pthread_mutex_t              mux_;
     pthread_cond_t               cond_;
     pcap_t                      *m_handle;
-
+    bool                         exit_;
 private:
     std::string                  m_nic;
     int                          m_port;
-
+    struct bpf_program           fp;
+    pthread_t                    pid;
+    bool                         run_;
 
 };
 
