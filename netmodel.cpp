@@ -82,13 +82,13 @@ void NetModel::setPort(const int &port)
     m_port = port;
 }
 
-u_char *NetModel::getRow()
+NetModel::UCHARS *NetModel::getRow()
 {
     pthread_mutex_lock(&mux_);
     if (q_.empty()) {
         pthread_cond_wait(&cond_, &mux_);
     }
-    u_char *t = const_cast<u_char *>(q_.front());
+    auto t = q_.front();
     pthread_mutex_unlock(&mux_);
     q_.pop();
     return t;
@@ -105,9 +105,13 @@ void NetModel::init()
 
 void loop_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     auto *self = reinterpret_cast<NetModel*>(args);
+    NetModel::UCHARS *t = new NetModel::UCHARS;
+    t->resize(header->caplen);
+
     if (!self->exit_) {
         pthread_mutex_lock(&self->mux_);
-        self->q_.push(packet);
+        memcpy(&*t->begin(), (char *)packet, header->caplen);
+        self->q_.push(t);
         pthread_cond_signal(&self->cond_);
         pthread_mutex_unlock(&self->mux_);
     }
@@ -115,6 +119,6 @@ void loop_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
 
 void *loop_event(void *args) {
     auto *self = reinterpret_cast<NetModel *>(args);
-    pcap_loop(self->m_handle, -1, loop_packet, (u_char *)self);
+    pcap_loop(self->m_handle, -1, loop_packet, (u_char *) self);
 
 }

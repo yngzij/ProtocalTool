@@ -15,7 +15,6 @@ NICMsg::NICMsg():m_netcard(nullptr)
 NIC *NICMsg::GetNetMsg()
 {
     return m_netcard->first;
-
 }
 
 void NICMsg::init()
@@ -24,10 +23,10 @@ void NICMsg::init()
     pcap_if_t *dev;
     char      errbuf[PCAP_ERRBUF_SIZE];
     pcap_findalldevs(&alldev, errbuf);
-
     for (dev = alldev; dev != nullptr; dev = dev->next) {
         for (auto *p = dev->addresses; p != nullptr; p = p->next) {
-            if (nullptr != p){
+
+            if (nullptr != p) {
                 auto toAddrIn = reinterpret_cast<struct sockaddr_in*>(p->addr);
                 if (toAddrIn->sin_family == AF_INET) {
                     NIC *v = reinterpret_cast<struct NIC*>(calloc(1,sizeof (NIC)));

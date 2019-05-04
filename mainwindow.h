@@ -7,6 +7,8 @@
 #include <QStandardItemModel>
 #include <choosedlg.h>
 #include "netmodel.h"
+#include <vector>
+#include <string>
 
 namespace Ui {
 class MainWindow;
@@ -24,9 +26,10 @@ public:
     void signalAndSlot();
 
 public:
-    bool                 exit_;
-    QStandardItemModel   *m_tableHandle;
-    QItemSelectionModel       *m_selectItem;
+    bool                            exit_;
+    QStandardItemModel              *m_tableHandle;
+    QItemSelectionModel             *m_selectItem;
+    std::vector<NetModel::UCHARS *>        pages;
 private slots:
     void on_ac_choose_triggered();
     void on_ac_start_triggered();
@@ -34,10 +37,11 @@ private slots:
 
     void on_ac_stop_triggered();
 
-private:
-    Ui::MainWindow       *ui;
-    ChooseDlg            *m_chooseDlg;
+    void on_actionARP_triggered();
 
+private:
+    Ui::MainWindow         *ui;
+    ChooseDlg              *m_chooseDlg;
 
 };
 

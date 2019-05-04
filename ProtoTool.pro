@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 INCLUDEPATH=/usr/local/include
 
 LIBS += -lpcap
+LIBS +=  -L/usr/local/lib  -lnet
 
 TARGET = ProtoTool
 TEMPLATE = app
@@ -23,7 +24,8 @@ SOURCES += \
     nicmsg.cpp \
     choosedlg.cpp \
     netmodel.cpp \
-    showwid.cpp
+    showwid.cpp \
+    requestdia.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -32,12 +34,14 @@ HEADERS += \
     choosedlg.h \
     netmodel.h \
     pcapstruct.h \
-    showwid.h
+    showwid.h \
+    requestdia.h
 
 FORMS += \
         mainwindow.ui \
     choosedlg.ui \
-    showwid.ui
+    showwid.ui \
+    requestdia.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

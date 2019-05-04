@@ -11,6 +11,8 @@
 class NetModel
 {
 public:
+    typedef   std::vector<u_char> UCHARS;
+
     NetModel();
     NetModel(char *, int);
 
@@ -20,11 +22,12 @@ public:
     void              setNic(const std::string &nic);
     int               port() const;
     void              setPort(const int &port);
-    u_char            *getRow();
+    UCHARS*           getRow();
     void              init();
 
+
 public:
-    std::queue<const u_char *>   q_;
+    std::queue<UCHARS* >         q_;
     pthread_mutex_t              mux_;
     pthread_cond_t               cond_;
     pcap_t                      *m_handle;

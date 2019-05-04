@@ -6,13 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>470</width>
-    <height>340</height>
+    <width>858</width>
+    <height>559</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableView" name="show_tableView"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>数据报数据</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListView" name="sec_listView"/>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
     Singleton<NICMsg>::Instance().init();
     Singleton<NetModel>::Instance().init();
 
-
     MainWindow w;
     w.show();
 

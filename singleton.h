@@ -5,7 +5,7 @@ template <typename T>
 class Singleton {
 public:
     static T& Instance() {
-        if (nullptr == value_ ){
+        if (nullptr == value_ ) {
             value_ = new T();
         }
         return *value_;
@@ -21,7 +21,6 @@ private:
 
     Singleton(const Singleton &);
     Singleton& operator = (const Singleton &);
-
 
 private:
     static T *value_;

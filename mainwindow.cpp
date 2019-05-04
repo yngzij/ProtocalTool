@@ -4,16 +4,22 @@
 #include <libnet.h>
 #include <choosedlg.h>
 #include <pthread.h>
+#include <algorithm>
 
 #include "nicmsg.h"
 #include "singleton.h"
 #include "netmodel.h"
 #include "singleton.h"
 #include "pcapstruct.h"
+#include "showwid.h"
+#include <sys/types.h>
 #include <QItemSelectionModel>
-
 #include <QDebug>
+#include <QMessageBox>
+#include "requestdia.h"
+
 void *ToModel(void *args);
+void print_hex_ascii_line(char *payload, int len, int offset);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -75,9 +81,23 @@ void MainWindow::on_ac_start_triggered()
 
 void MainWindow::on_currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
-    if (current.isValid()) {
-        qDebug() << current.row() <<current.column() << '\n';
+    if (current.row() >= pages.size()) {
+        fprintf(stderr, "test");
+        return;
     }
+
+    if (current.isValid()) {
+        ShowWid wid;
+        bool ok = wid.init(this->pages.at(current.row()));
+
+        if (!ok) {
+            QMessageBox::warning(this, "错误", "无效的报文");
+            return;
+        }
+        wid.run();
+        wid.exec();
+    }
+
 }
 
 void *ToModel(void *args) {
@@ -97,14 +117,18 @@ void *ToModel(void *args) {
     while (!self->exit_) {
         QList<QStandardItem *> itemList;
         auto *c = Singleton<NetModel>::Instance().getRow();
-        ethernet = (struct sniff_ethernet *) (c);
-        ip = (struct sniff_ip *) (c+ SIZE_ETHERNET);
+        auto *c_uchar = (u_char*) &*c->begin();
+
+        std::string t;
+        ethernet = (struct sniff_ethernet *)c_uchar;
+        ip = (struct sniff_ip *) (c_uchar+ SIZE_ETHERNET);
         size_ip = IP_HL(ip) * 4;
 
         if (size_ip < 20) {
             fprintf(stderr,"   * Invalid IP header length: %u bytes\n", size_ip);
             continue;
         }
+
         switch (ip->ip_p) {
         case IPPROTO_TCP:
             protoItem = new QStandardItem("TCP");
@@ -121,7 +145,7 @@ void *ToModel(void *args) {
             default:
             protoItem = new QStandardItem("unknow");
         }
-
+        self->pages.push_back(c);
         no =       new QStandardItem(QString::number(number,10));
         s_ipItem = new QStandardItem(QString::fromLocal8Bit(inet_ntoa(ip->ip_src)));
         d_ipItem = new QStandardItem (QString::fromLocal8Bit(inet_ntoa(ip->ip_dst)));
@@ -145,4 +169,55 @@ void *ToModel(void *args) {
 void MainWindow::on_ac_stop_triggered()
 {
     Singleton<NetModel>::Instance().stop();
+}
+
+
+void print_hex_ascii_line(char *payload, int len, int offset) {
+    int i;
+    int gap;
+    char *ch;
+
+    /* offset */
+    printf("%05d   ", offset);
+
+    /* hex */
+    ch = payload;
+    for (i = 0; i < len; i++) {
+        printf("%02x ", *ch);
+        ch++;
+        /* print extra space after 8th byte for visual aid */
+        if (i == 7)
+            printf(" ");
+    }
+    /* print space to handle line less than 8 bytes */
+    if (len < 8)
+        printf(" ");
+
+    /* fill hex gap with spaces if not full line */
+    if (len < 16) {
+        gap = 16 - len;
+        for (i = 0; i < gap; i++) {
+            printf("   ");
+        }
+    }
+    printf("   ");
+    /* ascii (if printable) */
+
+    ch = payload;
+    for (i = 0; i < len; i++) {
+        if (isprint(*ch))
+            printf("%c", *ch);
+        else
+            printf(".");
+        ch++;
+    }
+    printf("\n");
+
+    return;
+}
+
+void MainWindow::on_actionARP_triggered()
+{
+    RequestDia dia;
+    dia.exec();
 }
